@@ -83,7 +83,6 @@ void CmxlDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON3, m_b3);
 	DDX_Control(pDX, IDC_BUTTON21, m_b21);
 	DDX_Control(pDX, IDC_BUTTON13, m_b13);
-	//  DDX_Control(pDX, IDC_BUTTON10, m);
 	DDX_Control(pDX, IDC_BUTTON12, m_b12);
 	DDX_Control(pDX, IDC_BUTTON10, m_b10);
 	DDX_Control(pDX, IDC_BUTTON11, m_b11);
@@ -100,6 +99,7 @@ void CmxlDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON7, m_b7);
 	DDX_Control(pDX, IDC_BUTTON8, m_b8);
 	DDX_Control(pDX, IDC_BUTTON9, m_b9);
+	DDX_Control(pDX, IDC_EDIT3, medit3);
 }
 
 BEGIN_MESSAGE_MAP(CmxlDlg, CDialogEx)
@@ -148,17 +148,17 @@ UINT ThreadFirst(LPVOID inval)
 	DWORD startTick = GetTickCount();
 	pDoc->put_async(VARIANT_FALSE);
 
-	
 	CString outTotalString;
 
 	CString rss[21] = { _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=1114055000"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=2820051000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4111159800"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4211058000"),
-		_T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4215051000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4421051000"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4311374100"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=3017063000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4511171200")
+		_T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4215051000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4413132000"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4311374100"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=3017063000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4511171200")
 		, _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=2914074500"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4611051000"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4613078000"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4793025000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4717052000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4711152500"),
 		_T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=2711051700"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=3114051000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4812356000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=2647069000"), _T("http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=4794025000"), _T(" http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=5011063000") };
 	while (TRUE)
 	{
 	for (int k = 0; k < 21; k++)
 	{
+	
 		
 		pDoc->load((_variant_t)rss[k]);
 
@@ -206,7 +206,7 @@ UINT ThreadFirst(LPVOID inval)
 				}
 				else if (outString == "강수상태:3\n")
 				{
-					wet.Format(_T("하늘상태: 눈 또는 비 \n"));
+					wet.Format(_T("하늘상태: 비 또는 눈 \n"));
 				}
 				else if (outString == "강수상태:4\n")
 				{
@@ -253,7 +253,6 @@ UINT ThreadFirst(LPVOID inval)
 				{
 					nextsky.Format(_T("내일하늘상태:  흐림\n"));
 				}
-				//outString.Format(_T("내일하늘상태:%s\n"), (LPCTSTR)pNodeList->Getitem(i * 8)->Gettext());
 				array[k].Add(nextsky);
 			}
 		}
@@ -262,7 +261,6 @@ UINT ThreadFirst(LPVOID inval)
 	::Sleep(60000);
 }
 }
-
 
 BOOL CmxlDlg::OnInitDialog()
 {
@@ -286,10 +284,8 @@ BOOL CmxlDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
-
+	
 			AfxBeginThread(ThreadFirst, (LPVOID)array);
-	
-	
 
 	// 이 대화 상자의 아이콘을 설정합니다.  응용 프로그램의 주 창이 대화 상자가 아닐 경우에는
 	//  프레임워크가 이 작업을 자동으로 수행합니다.
@@ -322,48 +318,36 @@ void CmxlDlg::OnPaint()
 	CPaintDC dc(this); // device context for painting
 	//CClientDC dc(this);
 	CImage Image;
+	if (z == 0)
+	{
+		for(int i = 0; i < 25; i++)
+		{
+
+			Image.Load(_T("로딩1.png"));
+			Image.BitBlt(dc.m_hDC, 0, 0);
+			::Sleep(100);
+			Image.Destroy();
+			Image.Load(_T("로딩2.png"));
+			Image.BitBlt(dc.m_hDC, 0, 0);
+			::Sleep(100);
+			Image.Destroy();
+			Image.Load(_T("로딩3.png"));
+			Image.BitBlt(dc.m_hDC, 0, 0);
+			::Sleep(100);
+			Image.Destroy();
+			Image.Load(_T("로딩4.png"));
+			Image.BitBlt(dc.m_hDC, 0, 0);
+			::Sleep(100);
+			Image.Destroy();
+		}
+	}
 
 	Image.Load(_T("지도1.jpg"));
 	Image.BitBlt(dc.m_hDC, 0, 0);
 	medit.SetWindowTextW(_T("오늘의날씨"));
 	medit2.SetWindowTextW(_T("내일의날씨"));
+	medit3.SetWindowTextW(_T("지역명"));
 
-
-
-	/*if (IsIconic())
-	{
-		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
-
-		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-
-		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
-		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
-
-		CDC memDC;
-		memDC.CreateCompatibleDC(maps.GetDC());
-		CBitmap	bitmap;
-		bitmap.LoadBitmap(IDB_BITMAP1);
-		memDC.SelectObject(&bitmap);
-
-		CStatic *staticSize = (CStatic*)GetDlgItem(IDC_PICVIEW);
-		CRect RECT;
-		staticSize->GetClientRect(rect);
-		int iwidth = rect.Width();
-		int iheight = rect.Height();
-		maps.GetDC()->StretchBlt(0, 0, iwidth, iheight, &memDC, 0, 0, 149, 220, SRCCOPY);
-		// 아이콘을 그립니다.
-
-		dc.DrawIcon(x, y, m_hIcon);
-	}
-	else
-	{
-		CDialogEx::OnPaint();
-	}*/
 }
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
@@ -390,6 +374,7 @@ void CmxlDlg::OnClose()
 void CmxlDlg::OnOK()
 { 
 	w = 0;
+	z++;
 	Invalidate();
 	for (int i = 0; i < 8; i++)
 	{
@@ -440,6 +425,14 @@ BOOL CmxlDlg::CanExit()
 void CmxlDlg::wether()
 {
 
+	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
+	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
+	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
+	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
+	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
+	m_b21.EnableWindow(FALSE);
+
+
 	for (int i = 0; i < 8; i++)
 	{
 		mlist.AddString(array[w].GetAt(i));
@@ -453,47 +446,86 @@ void CmxlDlg::wether()
 	if (array[w].GetAt(9) == "내일하늘상태:  맑음\n")
 	{
 		Image.Load(_T("해1.jpg"));
-		Image.BitBlt(dc.m_hDC, 930, 50);
+		Image.BitBlt(dc.m_hDC, 980, 50);
 	}
 	else if (array[w].GetAt(9) == "내일하늘상태:  구름조금\n")
 	{
 		Image.Load(_T("구름조금.png"));
-		Image.BitBlt(dc.m_hDC, 930, 50);
+		Image.BitBlt(dc.m_hDC, 980, 50);
 	}
 	else
 	{
 		Image.Load(_T("구름.png"));
-		Image.BitBlt(dc.m_hDC, 930, 50);
+		Image.BitBlt(dc.m_hDC, 980, 50);
 	}
 	Image.Destroy();
 	//오늘이미지
-	if (array[w].GetAt(2) == "하늘상태:  맑음\n")
-	{
-		Image.Load(_T("해1.jpg"));
-		Image.BitBlt(dc.m_hDC, 700, 50);
-	}
-	else if (array[w].GetAt(2) == "하늘상태:  구름조금\n")
-	{
-		Image.Load(_T("구름조금.png"));
-		Image.BitBlt(dc.m_hDC, 700, 50);
-	}
+	
 
-	else //구름많거나 흐릴때 강수상태 변화에 따른 이미지
+			if (array[w].GetAt(2) == "하늘상태:  맑음\n")
+			{
+				Image.Load(_T("해1.jpg"));
+				Image.BitBlt(dc.m_hDC, 700, 50);
+			}
+			else if (array[w].GetAt(2) == "하늘상태:  구름조금\n")
+			{
+				Image.Load(_T("구름조금.png"));
+				Image.BitBlt(dc.m_hDC, 700, 50);
+			}
+			else 
+			{
+				Image.Load(_T("구름.png"));
+				Image.BitBlt(dc.m_hDC, 700, 50);
+			}
+
+			Image.Destroy();
+
+	if (array[w].GetAt(3) == "하늘상태:  비 또는 눈 없음\n")
+			{
+
+			}
+		
+	else if (array[w].GetAt(3) == "하늘상태:  비내림\n")
+		{
+			{
+				for (int i = 0; i<6; i++){
+					Image.Load(_T("비1.png"));
+					Image.BitBlt(dc.m_hDC, 700, 50);
+					::Sleep(100);
+					Image.Destroy();
+					Image.Load(_T("비2.png"));
+					Image.BitBlt(dc.m_hDC, 700, 50);
+					::Sleep(100);
+					Image.Destroy();
+				}
+				
+			}
+		}
+	else if (array[w].GetAt(3) == "하늘상태:  눈내림\n")
 	{
-		if (array[w].GetAt(3) == "강수상태:1\n")
+		for(int i=0;i<6;i++)
 		{
-			Image.Load(_T("비.jpg"));
+			Image.Load(_T("눈1.png"));
 			Image.BitBlt(dc.m_hDC, 700, 50);
+			::Sleep(100);
+			Image.Destroy();
+			Image.Load(_T("눈2.png"));
+			Image.BitBlt(dc.m_hDC, 700, 50);
+			::Sleep(100);
+			Image.Destroy();
 		}
-		else if (array[w].GetAt(3) == "강수상태:4\n")
-		{
-			Image.Load(_T("눈.jpg"));
+	}
+	else
+	{
+		for (int i = 0; i<6; i++){
+			Image.Load(_T("비눈1.png"));
 			Image.BitBlt(dc.m_hDC, 700, 50);
-		}
-		else
-		{
-			Image.Load(_T("구름.png"));
+			::Sleep(100);
+			Image.Destroy();
+			Image.Load(_T("비눈2.png"));
 			Image.BitBlt(dc.m_hDC, 700, 50);
+			::Sleep(100);
+			Image.Destroy();
 		}
 	}
 	Image.Destroy();
@@ -502,283 +534,150 @@ void CmxlDlg::wether()
 
 void CmxlDlg::OnBnClickedButton1() //서울
 {
-	
-	m_b2.EnableWindow(FALSE);m_b1.EnableWindow(FALSE);m_b3.EnableWindow(FALSE);m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE);m_b6.EnableWindow(FALSE);m_b7.EnableWindow(FALSE);m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE);m_b10.EnableWindow(FALSE);m_b11.EnableWindow(FALSE);m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE);m_b14.EnableWindow(FALSE);m_b15.EnableWindow(FALSE);m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 0;
+	medit3.SetWindowTextW(_T("서울"));
 	CmxlDlg::wether();
 }
-
-
-
-
 
 void CmxlDlg::OnBnClickedButton2()//인천
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 1;
+	medit3.SetWindowTextW(_T("인천"));
 	CmxlDlg::wether();
 }
-
-
 
 void CmxlDlg::OnBnClickedButton3()//수원
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
+	
 	w = 2;
+	medit3.SetWindowTextW(_T("수원"));
 	CmxlDlg::wether();
 }
-
 
 void CmxlDlg::OnBnClickedButton4()//춘천
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 3;
+	medit3.SetWindowTextW(_T("춘천"));
 	CmxlDlg::wether();
 }
-
 
 void CmxlDlg::OnBnClickedButton5()//강릉
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 4;
+	medit3.SetWindowTextW(_T("강릉"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton6()//서산
+void CmxlDlg::OnBnClickedButton6()//천안
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 5;
+	medit3.SetWindowTextW(_T("천안"));
 	CmxlDlg::wether();
 }
-
 
 void CmxlDlg::OnBnClickedButton7()//청주
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 6;
+	medit3.SetWindowTextW(_T("청주"));
 	CmxlDlg::wether();
 }
-
-
 void CmxlDlg::OnBnClickedButton8()//대전
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 7;
+	medit3.SetWindowTextW(_T("대전"));
 	CmxlDlg::wether();
 }
-
 
 void CmxlDlg::OnBnClickedButton9()//전주
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 8;
+	medit3.SetWindowTextW(_T("전주"));
 	CmxlDlg::wether();
 }
-
 
 void CmxlDlg::OnBnClickedButton10()//광주
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 9;
+	medit3.SetWindowTextW(_T("광주"));
 	CmxlDlg::wether();
 }
-
-
 
 void CmxlDlg::OnBnClickedButton11()//목포
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 10;
+	medit3.SetWindowTextW(_T("목표"));
 	CmxlDlg::wether();
 }
 
-void CmxlDlg::OnBnClickedButton12()
+void CmxlDlg::OnBnClickedButton12()//여수
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 11;
+	medit3.SetWindowTextW(_T("여수"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton13()
+void CmxlDlg::OnBnClickedButton13()//울진
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 12;
+	medit3.SetWindowTextW(_T("울진"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton14()
+void CmxlDlg::OnBnClickedButton14()//안동
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 13;
+	medit3.SetWindowTextW(_T("안동"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton15()
+void CmxlDlg::OnBnClickedButton15()//포항
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 14;
+	medit3.SetWindowTextW(_T("포항"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton16()
+void CmxlDlg::OnBnClickedButton16()//대구
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 15;
+	medit3.SetWindowTextW(_T("대구"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton17()
+void CmxlDlg::OnBnClickedButton17()//울산
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 16;
+	medit3.SetWindowTextW(_T("울산"));
 	CmxlDlg::wether();
 }
 
-
-void CmxlDlg::OnBnClickedButton18()
+void CmxlDlg::OnBnClickedButton18()//창원
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 17;
+	medit3.SetWindowTextW(_T("창원"));
 	CmxlDlg::wether();
 }
 
-
-
-void CmxlDlg::OnBnClickedButton19()
+void CmxlDlg::OnBnClickedButton19()//부산
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 18;
+	medit3.SetWindowTextW(_T("부산"));
 	CmxlDlg::wether();
 
 }
 
-
-void CmxlDlg::OnBnClickedButton21()
+void CmxlDlg::OnBnClickedButton21()//제주
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 20;
+	medit3.SetWindowTextW(_T("제주"));
 	CmxlDlg::wether();
 	}
 
 
-
-
-
-void CmxlDlg::OnBnClickedButton20()
+void CmxlDlg::OnBnClickedButton20()//울릉도 독도
 {
-	m_b2.EnableWindow(FALSE); m_b1.EnableWindow(FALSE); m_b3.EnableWindow(FALSE); m_b4.EnableWindow(FALSE);
-	m_b5.EnableWindow(FALSE); m_b6.EnableWindow(FALSE); m_b7.EnableWindow(FALSE); m_b8.EnableWindow(FALSE);
-	m_b9.EnableWindow(FALSE); m_b10.EnableWindow(FALSE); m_b11.EnableWindow(FALSE); m_b12.EnableWindow(FALSE);
-	m_b13.EnableWindow(FALSE); m_b14.EnableWindow(FALSE); m_b15.EnableWindow(FALSE); m_b16.EnableWindow(FALSE);
-	m_b17.EnableWindow(FALSE); m_b18.EnableWindow(FALSE); m_b19.EnableWindow(FALSE); m_b20.EnableWindow(FALSE);
-	m_b21.EnableWindow(FALSE);
 	w = 19;
+	medit3.SetWindowTextW(_T("울릉도 독도"));
 	CmxlDlg::wether();
 	}
 

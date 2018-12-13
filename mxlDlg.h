@@ -19,6 +19,7 @@ public:
 	CmxlDlg(CWnd* pParent = NULL);	// 표준 생성자입니다.
 	virtual ~CmxlDlg();
 	int w=0;
+	int z = 0;
 	CStringArray *array = new CStringArray[21];
 // 대화 상자 데이터입니다.
 	enum { IDD = IDD_MXL_DIALOG };
@@ -44,7 +45,6 @@ protected:
 	afx_msg void OnClose();
 	virtual void OnOK();
 	virtual void OnCancel();
-
 	virtual void wether();
 	DECLARE_MESSAGE_MAP()
 public:
@@ -98,4 +98,5 @@ public:
 	CButton m_b7;
 	CButton m_b8;
 	CButton m_b9;
+	CEdit medit3;
 };
