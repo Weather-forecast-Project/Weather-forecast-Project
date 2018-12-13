@@ -18,7 +18,6 @@ class CmxlDlgAutoProxy : public CCmdTarget
 // 특성입니다.
 public:
 	CmxlDlg* m_pDialog;
-
 // 작업입니다.
 public:
 
